@@ -35,6 +35,12 @@ class WhmcsController extends Controller
             return response()->json($ex->getMessage());
         }
     }
+
+    public function create()
+    {
+        return view('addClient');
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -46,7 +52,7 @@ class WhmcsController extends Controller
             ];
 
             $token = $this->whmcsConn();
-          
+
             if (!$token) {
                 return response()->json(['error' => 'Authentication error'], 401);
             }
@@ -81,6 +87,7 @@ class WhmcsController extends Controller
                 'headers' => $headers,
                 'json' => $postData,
             ]);
+
 
             if ($response->getStatusCode() === 201) {
                 // Record created successfully

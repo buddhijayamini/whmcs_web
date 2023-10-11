@@ -17,5 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::group([], function () {
     // Route::get('login-whmcs', [WhmcsController::class, 'whmcsConn'])->name('login-whmcs');
     Route::get('view-client', [WhmcsController::class, 'index'])->name('view-client');
-    Route::get('create-client', [WhmcsController::class, 'store'])->name('create-client');
+    Route::get('add-client', [WhmcsController::class, 'create'])->name('add-client');
+    Route::post('create-client', [WhmcsController::class, 'store'])->name('create-client');
 });
