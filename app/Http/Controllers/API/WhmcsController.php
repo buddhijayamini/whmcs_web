@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
@@ -115,42 +116,35 @@ class WhmcsController extends Controller
         ];
 
         try {
-            // Set post values
-            $authData = array(
-                'identifier' => $apiCredentials['api_identifier'],
-                'secret' => $apiCredentials['api_secret'],
-                'grant_type' => 'password', // Use 'password' as the grant type for this method
-                'username' => $apiCredentials['username'], // Replace with your WHMCS username
-                'password' => $apiCredentials['password'], // Replace with your WHMCS password
-            );
+
             // Create a Guzzle HTTP client
             $client = new Client();
 
-            // Send the authentication request
-            $response = $client->post($apiCredentials['base_url'] . 'oauth2/token', [
-                'headers' => [
-                    'Content-Type' => 'application/json',
+            // Authentication request data
+            $authData = [
+                'form_params' => [
+                    'grant_type' => 'password',
+                    'username' => $apiCredentials['username'],
+                    'password' => $apiCredentials['password'],
                 ],
-                'form_params' => $authData,
-            ]);
+                'auth' => [$apiCredentials['api_identifier'], $apiCredentials['api_secret']],
+            ];
 
-            // Check if the request was successful
-            if ($response->getStatusCode() === 200) {
-                // Parse the response to extract the access token
-                $responseData = json_decode($response->getBody(), true);
+            // Send the authentication request
+            $response = $client->post($apiCredentials['base_url'] . 'oauth2/token', $authData);
 
-                if (isset($responseData['access_token'])) {
-                    $accessToken = $responseData['access_token'];
+            // Check the response status code
+            if ($response->getStatusCode() == 200) {
+                $responseBody = $response->getBody()->getContents();
+                $accessToken = json_decode($responseBody, true)['access_token'];
 
-                    return response()->json($accessToken);
-                } else {
-                    return response()->json(['error' => 'Login error'], 401);
-                }
+                // You now have the access token for further API requests
+                return response()->json($accessToken);
             } else {
-                return response()->json(['error' => 'Login error with status code'], $response->getStatusCode());
+                return response()->json(['error' => 'Authentication request failed with status code: ' . $response->getStatusCode()]);
             }
-        } catch (\Exception $ex) {
-            return response()->json(['error' => $ex->getMessage()], 500);
+        } catch (Exception $e) {
+            return 'Error: ' . $e->getMessage();
         }
     }
 }
