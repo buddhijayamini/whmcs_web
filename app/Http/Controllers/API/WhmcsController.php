@@ -50,17 +50,22 @@ class WhmcsController extends Controller
         try {
             $apiCredentials = [
                 'base_url' => env('WHMCS_BASE_URL'),
+                'api_identifier' => env('WHMCS_IDENTIFIER'),
+                'api_secret' => env('WHMCS_SECRET_KEY'),
+                'api_secret' => env('WHMCS_SECRET_KEY'),
+                'username' => env('WHMCS_USERNAME'),
+                'password' => env('WHMCS_PASSWORD'),
             ];
 
-            $token = $this->whmcsConn();
+            // $token = $this->whmcsConn();
 
-            if (!$token) {
-                return response()->json(['error' => 'Authentication error'], 401);
-            }
+            // if (!$token) {
+            //     return response()->json(['error' => 'Authentication error'], 401);
+            // }
 
             $headers =  [
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
+             //   'Authorization' => 'Bearer ' . $token,
             ];
 
             $postData = [
@@ -84,7 +89,7 @@ class WhmcsController extends Controller
             $client = new Client();
 
             // Send a POST request to create a record
-            $response = $client->post($apiCredentials['base_url'] . 'api-reference/addclient', [
+            $response = $client->post($apiCredentials['base_url'] . 'includes/api.php', [
                 'headers' => $headers,
                 'json' => $postData,
             ]);
