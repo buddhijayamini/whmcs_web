@@ -57,15 +57,15 @@ class WhmcsController extends Controller
                 'password' => env('WHMCS_PASSWORD'),
             ];
 
-            // $token = $this->whmcsConn();
+            $token = $this->whmcsConn();
 
-            // if (!$token) {
-            //     return response()->json(['error' => 'Authentication error'], 401);
-            // }
+            if (!$token) {
+                return response()->json(['error' => 'Authentication error'], 401);
+            }
 
             $headers =  [
                 'Content-Type' => 'application/json',
-             //   'Authorization' => 'Bearer ' . $token,
+                'Authorization' => 'Bearer ' . $token,
             ];
 
             $postData = [
@@ -89,7 +89,7 @@ class WhmcsController extends Controller
             $client = new Client();
 
             // Send a POST request to create a record
-            $response = $client->post($apiCredentials['base_url'] . 'includes/api.php', [
+            $response = $client->post($apiCredentials['base_url'] . 'clientsadd.php?action=add', [
                 'headers' => $headers,
                 'json' => $postData,
             ]);
@@ -136,7 +136,7 @@ class WhmcsController extends Controller
             ];
 
             // Send the authentication request
-            $response = $client->post($apiCredentials['base_url'] . 'oauth2/token', $authData);
+            $response = $client->post($apiCredentials['base_url'], $authData);
 
             // Check the response status code
             if ($response->getStatusCode() == 200) {
