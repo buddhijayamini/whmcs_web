@@ -14,14 +14,25 @@ class WhmcsController extends Controller
         try {
             $apiCredentials = [
                 'base_url' => env('WHMCS_BASE_URL'),
-                'api_identifier' => env('WHMCS_IDENTIFIER'),
-                'api_secret' => env('WHMCS_SECRET_KEY'),
+                'username' => env('WHMCS_USERNAME'),
+                'password' => env('WHMCS_PASSWORD'),
+                'action' => 'GetClients',
+                'search' => 'example.com',
+                'responsetype' => 'json'
             ];
-            $headers =  ['Content-Type' => 'application/json'];
+
+            $headers =  [
+            'Content-Type' => 'application/json',
+            'username' => env('WHMCS_USERNAME'),
+            'password' => env('WHMCS_PASSWORD'),
+            'action' => 'GetClients',
+            'search' => 'example.com',
+            'responsetype' => 'json'
+        ];
 
             $client = new Client();
             // Send a GET request to create a record
-            $response = $client->get($apiCredentials['base_url'] . 'api-reference/getclients', [
+            $response = $client->get($apiCredentials['base_url'] . 'includes/api.php', [
                 'headers' => $headers
             ]);
 
@@ -89,7 +100,7 @@ class WhmcsController extends Controller
             $client = new Client();
 
             // Send a POST request to create a record
-            $response = $client->post($apiCredentials['base_url'] . 'clientsadd.php?action=add', [
+            $response = $client->post($apiCredentials['base_url'] . 'includes/api.php', [
                 'headers' => $headers,
                 'json' => $postData,
             ]);
